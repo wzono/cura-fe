@@ -11,6 +11,9 @@ const mutations = {
     state.user = {};
     state.token = "";
     clearToken();
+  },
+  [types.UPDATE_DIRECTION](state, { payload }) {
+    state.direction = payload.direction;
   }
 }
 

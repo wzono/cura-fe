@@ -74,6 +74,7 @@ export default {
       }
     },
     isFormFieldVaild() {
+      console.log(this.validateForm);
       !required(this.validateForm.cura) && this.$toast.info("cura号不能为空");
       !required(this.validateForm.password) && this.$toast.info("密码不能为空");
       return (
@@ -87,7 +88,7 @@ export default {
     }
   },
   created() {
-    this.validateForm.cura = this.$route.query.cura_number;
+    this.validateForm.cura = this.$route.query.cura_number || "";
   }
 };
 </script>

@@ -5,7 +5,9 @@ const Register = () => import('@/views/register/index.vue');
 const RegisterSuccess = () => import('@/views/register/success.vue');
 
 const UserLayout = () => import('@/views/user/layout.vue');
-const UserMessageBox = () => import('@/views/user/children/message_box.vue');
+const UserMessageBox = () => import('@/views/user/children/msg_box.vue');
+const UserAppBox = () => import('@/views/user/children/app_box.vue');
+const UserMineBox = () => import('@/views/user/children/mine_box.vue');
 
 
 const routes = [
@@ -35,11 +37,22 @@ const routes = [
     meta: {
       requireAuth: true,
     },
+    redirect: '/user/msg_box',
     children: [
       {
-        path: '',
-        name: 'message-box',
+        path: 'msg_box',
+        name: 'msg-box',
         component: UserMessageBox,
+      },
+      {
+        path: 'app_box',
+        name: 'app-box',
+        component: UserAppBox,
+      },
+      {
+        path: 'mine_box',
+        name: 'mine-box',
+        component: UserMineBox,
       }
     ]
   }
