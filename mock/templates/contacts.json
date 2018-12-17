@@ -1,0 +1,11 @@
+{
+  "status": 200,
+  "message": "获取成功",
+  "data|40-80": [{
+    "cura_number": "@natural(100000, 10000000)",
+    "nickname": "@name",
+    "head_url": "@image(300x300)",
+    "signature": "@csentence(5, 30)",
+    "group": "@natural(0, 4)"
+  }]
+}

@@ -16,6 +16,14 @@ const actions = {
       type: types.LOGIN,
       payload: data,
     })
+  },
+  async getContacts({ commit }) {
+    const res = await $api.user.getContacts();
+    const { data } = res;
+    commit({
+      type: types.SET_CONTACTS,
+      payload: data,
+    })
   }
 }
 

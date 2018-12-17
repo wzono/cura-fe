@@ -19,4 +19,9 @@ module.exports = app => {
     const json = getJSONData('./templates/login.json');
     res.json(Mock.mock(json));
   })
+
+  app.get('/api/user/contacts', (req, res) => {
+    const json = getJSONData('./templates/contacts.json');
+    res.json(Mock.mock(json));
+  })
 };

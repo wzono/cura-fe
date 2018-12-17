@@ -5,9 +5,9 @@ const Register = () => import('@/views/register/index.vue');
 const RegisterSuccess = () => import('@/views/register/success.vue');
 
 const UserLayout = () => import('@/views/user/layout.vue');
-const UserMessageBox = () => import('@/views/user/children/msg_box.vue');
-const UserAppBox = () => import('@/views/user/children/app_box.vue');
-const UserMineBox = () => import('@/views/user/children/mine_box.vue');
+const UserMessageBox = () => import('@/views/user/components/msg_box.vue');
+const UserContacts = () => import('@/views/user/components/contacts');
+const UserChat = () => import('@/views/user/components/chat');
 
 
 const routes = [
@@ -45,14 +45,14 @@ const routes = [
         component: UserMessageBox,
       },
       {
-        path: 'app_box',
-        name: 'app-box',
-        component: UserAppBox,
+        path: 'contacts',
+        name: 'contacts',
+        component: UserContacts,
       },
       {
-        path: 'mine_box',
-        name: 'mine-box',
-        component: UserMineBox,
+        path: 'chat',
+        name: 'chat',
+        component: UserChat,
       }
     ]
   }

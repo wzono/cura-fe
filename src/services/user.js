@@ -30,3 +30,8 @@ export function register({
 export function getUser() {
   return $request('/api/user/me');
 }
+
+
+export function getContacts() {
+  return $request('/api/user/contacts');
+}

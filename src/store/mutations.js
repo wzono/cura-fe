@@ -14,6 +14,9 @@ const mutations = {
   },
   [types.UPDATE_DIRECTION](state, { payload }) {
     state.direction = payload.direction;
+  },
+  [types.SET_CONTACTS](state, { payload }) {
+    state.contacts = payload;
   }
 }
 

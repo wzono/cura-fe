@@ -49,9 +49,9 @@ instance.interceptors.response.use(response => response.data, err => {
       })
     }
 
-    const errorMessage = data.message || data.error || codeMessage[status];
-    Toast.fail(errorMessage);
-    return Promise.reject(err.response.data);
+    const errorMessage = (data && (data.message || data.error)) || codeMessage[status];
+    Toast.error(errorMessage);
+    return Promise.reject(err);
   }
 })
 
