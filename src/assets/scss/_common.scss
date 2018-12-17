@@ -1,0 +1,101 @@
+@import './variables';
+@import './mixins';
+@import './muse_reset';
+
+* {
+  box-sizing: border-box;
+}
+
+
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+/*定义滚动条轨道 内阴影+圆角*/
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0);
+  border-radius: 10px;
+  background-color: #F5F5F5;
+}
+
+/*定义滑块 内阴影+圆角*/
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: #555;
+}
+
+input[type="button"],
+input[type="submit"],
+input[type="search"],
+input[type="reset"],
+textarea {
+  -webkit-appearance: none;
+}
+
+.clear:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.clear {
+  zoom: 1;
+}
+
+.ellipsis {
+  @include ellipsis();
+}
+
+[class*='border1px'] {
+  position: relative;
+  &::after {
+    @include border1px();
+  }
+}
+
+.border1px {
+  &--top::after {
+    border-top-width: 1px;
+  }
+  &--left::after {
+    border-left-width: 1px;
+  }
+  &--right::after {
+    border-right-width: 1px;
+  }
+  &--bottom::after {
+    border-bottom-width: 1px;
+  }
+  &--top-bottom::after {
+    border-width: 1px 0;
+  }
+  &--surround::after {
+    border-width: 1px;
+  }
+}
+
+.tb-line {
+  position: relative;
+  display: inline-block;
+  background-color: inherit;
+  &::after,
+  &::before {
+    content: '';
+    height: 2px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    background-color: $theme-sub-color;
+    opacity: .6;
+  }
+  &::before {
+    top: 0;
+  }
+  &::after {
+    bottom: 0;
+  }
+}

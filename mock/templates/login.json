@@ -1,0 +1,19 @@
+{
+  "status": 200,
+  "message": "获取成功",
+  "data": {
+    "user": {
+      "cura_number": 1000001,
+      "sex": "",
+      "phone": "13361652535",
+      "nickname": "wingsico",
+      "birthday": "@date",
+      "head_url": "@image(300x300)",
+      "native_place": "江西省-赣州市",
+      "resume": "",
+      "signature": "",
+      "commend": "活泼,乐观,开朗"
+    },
+    "token": "eaksdjasd8984asdas98.sdasd7da"
+  }
+}

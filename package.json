@@ -7,14 +7,31 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "amfe-flexible": "^2.2.1",
+    "axios": "^0.18.0",
+    "lodash": "^4.17.11",
+    "moment": "^2.23.0",
+    "muse-ui": "^3.0.1",
+    "muse-ui-loading": "^0.2.0",
+    "muse-ui-message": "^0.2.1",
+    "muse-ui-progress": "^0.1.0",
+    "muse-ui-toast": "^0.3.0",
+    "normalize.css": "^8.0.1",
+    "qs": "^6.6.0",
+    "typeface-roboto": "^0.0.54",
+    "validator.tool": "^1.0.10",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
+    "vue-socket.io": "^3.0.4",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",
     "@vue/cli-service": "^3.2.0",
+    "body-parser": "^1.18.3",
+    "mockjs": "^1.0.1-beta3",
     "node-sass": "^4.9.0",
+    "postcss-pxtorem": "^4.0.1",
     "sass-loader": "^7.0.1",
     "vue-template-compiler": "^2.5.17"
   }
