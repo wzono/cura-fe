@@ -31,6 +31,11 @@
     flex: 1;
     width: 100vw;
   }
+
+  .mu-custom-content {
+    min-height: calc(100vh - 56px);
+    background: #fafafa;
+  }
 </style>
 
 <script>

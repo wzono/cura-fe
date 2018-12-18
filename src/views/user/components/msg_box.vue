@@ -63,7 +63,7 @@
     </mu-drawer>
 
     <div class="content-wrapper mu-custom-content">
-      123123
+
     </div>
   </div>
 </template>
@@ -93,6 +93,10 @@ export default {
     firstCharOfNickname() {
       return this.user.nickname.charAt(0);
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    this.open = false;
+    next();
   }
 };
 </script>
@@ -126,5 +130,9 @@ export default {
 .list-wrapper {
   font-size: 14px;
   font-weight: 500;
+}
+
+.mu-content-wrapper {
+
 }
 </style>

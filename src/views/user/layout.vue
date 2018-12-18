@@ -1,12 +1,15 @@
 <template>
   <div class="user-page">
-    <router-view />
+    <CommonFadeTransition>
+      <router-view />
+    </CommonFadeTransition>
   </div>
 </template>
 
 <script>
 export default {
   name: "user-page",
+
 };
 </script>
 

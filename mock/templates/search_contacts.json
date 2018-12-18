@@ -1,0 +1,13 @@
+{
+  "status": 200,
+  "message": "获取成功",
+  "data|0-3": [
+    {
+      "cura_number": "@natural(100000, 10000000)",
+      "nickname": "@name",
+      "head_url": "@image(300x300)",
+      "sex": "@pick(['男','女'])",
+      "age": "@natural(10, 30)"
+    }
+  ]
+}

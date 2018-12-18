@@ -8,6 +8,7 @@ const UserLayout = () => import('@/views/user/layout.vue');
 const UserMessageBox = () => import('@/views/user/components/msg_box.vue');
 const UserContacts = () => import('@/views/user/components/contacts');
 const UserChat = () => import('@/views/user/components/chat');
+const UserAddContact = () => import('@/views/user/components/add_contact');
 
 
 const routes = [
@@ -53,6 +54,11 @@ const routes = [
         path: 'chat',
         name: 'chat',
         component: UserChat,
+      },
+      {
+        path: 'add_contact',
+        name: 'add-contact',
+        component: UserAddContact,
       }
     ]
   }

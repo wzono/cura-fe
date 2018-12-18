@@ -25,6 +25,11 @@ router.beforeEach(async (to, from, next) => {
   const toIndex = history.getItem(to.path);
   const fromIndex = history.getItem(from.path);
 
+  if (to.path === '/user/msg_box' || to.path === '/') {
+    history.clear()
+    history.setItem(to.path, 0);
+  }
+
   if (toIndex) {
     if (!fromIndex || parseInt(toIndex, 10) > parseInt(fromIndex, 10) || (toIndex === '0' && fromIndex === '0')) {
       store.commit({
@@ -51,7 +56,6 @@ router.beforeEach(async (to, from, next) => {
     if (store.state.token) {
       next();
     } else {
-      console.log(getToken())
       if (getToken()) {
         try {
           await store.dispatch('getUser')
@@ -68,7 +72,6 @@ router.beforeEach(async (to, from, next) => {
         query: { redirect: to.fullPath }
         })
       }
-
     }
   } else {
     next();

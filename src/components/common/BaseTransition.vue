@@ -1,5 +1,5 @@
 <template>
-    <transition :name="'vux-pop-' + (direction === 'forward' ? 'in' : 'out')">
+  <transition :name="'vux-pop-' + (direction === 'forward' ? 'in' : 'out')">
     <slot></slot>
   </transition>
 </template>
@@ -10,7 +10,7 @@ import { mapState } from "vuex";
 export default {
   name: "transition-common",
   computed: {
-    ...mapState(['direction'])
+    ...mapState(["direction"])
   }
 };
 </script>

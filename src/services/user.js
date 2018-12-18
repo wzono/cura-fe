@@ -1,3 +1,5 @@
+import { __values } from "tslib";
+
 export function login({
   cura_number,
   password,
@@ -34,4 +36,13 @@ export function getUser() {
 
 export function getContacts() {
   return $request('/api/user/contacts');
+}
+
+export function searchOthers(value) {
+  return $request('/api/user/search_contacts', {
+    method: 'get',
+    params: {
+      searchValue: value,
+    }
+  })
 }

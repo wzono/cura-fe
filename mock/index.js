@@ -24,4 +24,10 @@ module.exports = app => {
     const json = getJSONData('./templates/contacts.json');
     res.json(Mock.mock(json));
   })
+
+  app.get('/api/user/search_contacts', (req, res) => {
+    console.log(req.query);
+    const json = getJSONData('./templates/search_contacts.json');
+    res.json(Mock.mock(json));
+  })
 };

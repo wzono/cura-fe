@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-      <CommonTransition>
+      <CommonBaseTransition>
         <router-view/>
-      </CommonTransition>
+      </CommonBaseTransition>
   </div>
 </template>
