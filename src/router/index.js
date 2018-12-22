@@ -4,6 +4,7 @@ import routes from './routes';
 import store from '@/store/index';
 import * as types from '@/store/types';
 import { getToken } from '@/utils/auth';
+import Toast from 'muse-ui-toast';
 
 Vue.use(Router)
 
@@ -58,12 +59,12 @@ router.beforeEach(async (to, from, next) => {
     } else {
       if (getToken()) {
         try {
-          await store.dispatch('getUser')
+          await store.dispatch('getMe')
           next();
         } catch (e) {
+          Toast.error('token失效，请重新登录')
           next({
             path: '/login',
-            query: { redirect: to.fullPath }
           })
         };
       } else {
