@@ -6,7 +6,7 @@ module.exports = {
       propList: ['*', '!font-size*'],
       mediaQuery: false,
       minPixelValue: 12,
-      selectorBlackList: ['unrem', 'mu']
+      selectorBlackList: ['unrem', 'mu', 'van']
     },
   }
 }
