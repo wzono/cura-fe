@@ -10,7 +10,7 @@
 
     <div class="action-wrapper">
       <div class="start-wrapper">
-        <mu-button color="primary" to="/register">Go Cura~
+        <mu-button color="blueA200" to="/register">Go Cura~
           <mu-icon right value="send"/>
         </mu-button>
       </div>
