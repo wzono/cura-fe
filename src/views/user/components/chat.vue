@@ -1,20 +1,21 @@
 <template>
   <mu-flex class="chat">
     <LayoutBackBar>
-      <mu-flex slot="title" align-items="center">
+      <mu-flex slot="title" align-items="center" @click="toUserDetail">
         <mu-avatar>
-          <!-- <img :src="head_url" alt="avatar_url" v-if="head_url"> -->
-          <span>W</span>
+          <img :src="currentChatUser.headUrl" alt="avatar_url" v-if="currentChatUser.headUrl">
+          <span v-else>W</span>
         </mu-avatar>
-        <div class="user-nickname">{{ currentChatCura }}</div>
+        <mu-flex direction="column" class="chat-user-info">
+          <div class="user-nickname">{{ currentChatUser.nickname }}</div>
+          <div class="user-cura-number">{{ currentChatUser.curaNumber }}</div>
+        </mu-flex>
       </mu-flex>
       <mu-button icon slot="right">
         <mu-icon value="more_vert"></mu-icon>
       </mu-button>
       <mu-flex class="mu-chat-wrapper" direction="column">
-        <mu-container class="mu-chat-container">
-            123123
-        </mu-container>
+        <mu-container class="mu-chat-container"></mu-container>
         <mu-flex class="mu-chat-input-wrapper" justify-content="around" align-items="end">
           <mu-button icon>
             <mu-icon value="insert_emoticon" color="#bbb"/>
@@ -28,7 +29,7 @@
             class="mu-message-input"
           />
           <mu-button icon>
-            <mu-icon value="send" color="primary" />
+            <mu-icon value="send" color="blueA200"/>
           </mu-button>
         </mu-flex>
       </mu-flex>
@@ -38,28 +39,92 @@
 
 <script>
 import { isUndefined } from "lodash";
+import { mapState } from "vuex";
+
 export default {
   name: "chat",
   data() {
     return {
-      currentChatCura: "",
-      message: ""
+      message: "",
+      currentChatUser: {
+        nickname: "Annoymous",
+        curaNumber: 999999
+      }
     };
   },
+  computed: {
+    ...mapState(["token", "user"])
+  },
   methods: {
-    getChatObject() {
-      const cura_number = this.$route.query.cura;
-      if (isUndefined(cura_number)) {
+    async getChatObject() {
+      const curaNumber = this.$route.query.cura;
+      if (isUndefined(curaNumber)) {
         this.$toast.error("无效的用户");
         this.$router.go(-1);
         return;
       }
 
-      this.currentChatCura = cura_number;
+      try {
+        const { data } = await this.$api.user.getUser(curaNumber);
+        this.currentChatUser = data;
+      } catch (e) {
+        this.$router.go(-1);
+        this.$throw(e);
+      }
+    },
+    toUserDetail() {
+      this.$router.push(`/user/detail?cura=${this.currentChatUser.curaNumber}`);
+    },
+    initSocket() {
+      this.header = {
+        Authorization: this.token
+      };
+
+      this.ws = this.$ws();
+
+      this.ws.connect(
+        this.header,
+        this.onConnect,
+        this.onError
+      );
+    },
+    onConnect(frame) {
+      this.ws.subscribe(
+        "/topic/privateChat",
+        frame => {
+          console.log(frame);
+        },
+        this.header
+      );
+
+      this.ws.send(
+        "/app/privateChat",
+        this.header,
+        JSON.stringify({
+          sendCuraNumber: this.user.curaNumber,
+          receiveCuraNumber: this.currentChatUser.curaNumber,
+          message: "hahaha"
+        })
+      );
+    },
+    onError(err) {
+      console.log("error");
+      console.log(err);
+    },
+    disConnect() {
+      if (this.ws !== null) {
+        this.ws.disconnect();
+      }
     }
+  },
+  mounted() {
+    this.initSocket();
   },
   created() {
     this.getChatObject();
+  },
+  beforeDestroy() {
+    this.disConnect();
   }
 };
 </script>
@@ -67,12 +132,23 @@ export default {
 <style lang="scss" scoped>
 .user-nickname {
   @include ellipsis();
+}
+
+.chat-user-info {
+  line-height: 1;
   margin-left: 10px;
+  flex: 1;
+
+  .user-cura-number {
+    font-size: 12px;
+    margin-top: 5px;
+    color: rgba(255, 255, 255, 0.5);
+  }
 }
 
 .mu-chat-wrapper {
   width: 100%;
-  height: calc(100vh - 56px);
+  height: 100%;
 }
 .mu-chat-input-wrapper {
   width: 100%;
@@ -81,7 +157,7 @@ export default {
 }
 
 .mu-chat-container {
-  height: calc(100% - 48px);
+  flex: 1;
   overflow: auto;
   background: url("http://cdn.wingsico.org/image/chat_bg.jpg") fixed;
   background-size: 600px;
