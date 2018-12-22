@@ -2,10 +2,14 @@
   "status": 200,
   "message": "获取成功",
   "data|40-80": [{
-    "cura_number": "@natural(100000, 10000000)",
+    "curaNumber": "@natural(100000, 10000000)",
     "nickname": "@name",
-    "head_url": "@image(300x300)",
+    "headUrl": "http://cdn.wingsico.org/image/v2-c5a239736871ed06a8f1dd32e2820610_hd.jpg",
     "signature": "@csentence(5, 30)",
-    "group": "@natural(0, 4)"
+    "group": {
+      "name" : "@pick(['我的好友','家人','同学','同事'])",
+      "id": "@natural(1, 1000)"
+    },
+    "remark": "@cname"
   }]
 }

@@ -3,16 +3,29 @@
   "message": "获取成功",
   "data": {
     "user": {
-      "cura_number": 1000001,
-      "sex": "",
+      "curaNumber": 1000001,
+      "sex": "男",
       "phone": "13361652535",
       "nickname": "wingsico",
       "birthday": "@date",
-      "head_url": "@image(300x300)",
-      "native_place": "江西省-赣州市",
-      "resume": "",
-      "signature": "",
-      "commend": "活泼,乐观,开朗"
+      "headUrl": "http://cdn.wingsico.org/image/v2-c5a239736871ed06a8f1dd32e2820610_hd.jpg",
+      "nativePlace": "江西省-赣州市",
+      "resume": "这个人很懒，什么都没有留下~",
+      "signature": "这个人很懒，什么都没有留下~",
+      "commends|3-6": [{
+        "user": {
+          "curaNumber": 1000001,
+          "sex": "男",
+          "phone": "13361652535",
+          "nickname": "wingsico",
+          "birthday": "@date",
+          "headUrl": "http://cdn.wingsico.org/image/v2-c5a239736871ed06a8f1dd32e2820610_hd.jpg",
+          "nativePlace": "江西省-赣州市",
+          "resume": "",
+          "signature": "这个人很懒，什么都没有留下~"
+        },
+        "commend": ["快乐", "haha", "666"]
+      }]
     },
     "token": "eaksdjasd8984asdas98.sdasd7da"
   }

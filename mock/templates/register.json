@@ -2,6 +2,6 @@
   "status": 200,
   "message": "注册成功",
   "data": {
-    "cura_number": 1000001
+    "curaNumber": 1000001
   }
 }

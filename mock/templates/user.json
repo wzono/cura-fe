@@ -1,0 +1,21 @@
+{
+  "status": 200,
+  "message": "获取成功",
+  "data": {
+    "curaNumber": "@natural(1000001, 10000000)",
+    "sex": "@pick(['男','女'])",
+    "phone": "13361652535",
+    "nickname": "@name",
+    "birthday": "@date",
+    "headUrl": "http://cdn.wingsico.org/image/v2-c5a239736871ed06a8f1dd32e2820610_hd.jpg",
+    "nativePlace": "@province @city",
+    "signature": "这个人很懒，什么都没有留下~",
+    "isFriend": "@boolean",
+    "commends|3-6": [
+      {
+        "headUrl": "http://cdn.wingsico.org/image/v2-c5a239736871ed06a8f1dd32e2820610_hd.jpg",
+        "text": "@ctitle(3, 8)"
+      }
+    ]
+  }
+}
