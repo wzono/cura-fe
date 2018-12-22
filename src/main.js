@@ -10,6 +10,8 @@ import Loading from 'muse-ui-loading';
 import apiRegister from '@/plugins/apiRegister'; // 导入全局api
 import componentsRegister from '@/plugins/componentsRegister'; // 导入全局组件
 import request from '@/plugins/request'; // 导入全局封装的request
+import Sockjs from 'sockjs-client';
+import Stompjs from 'stompjs';
 import 'typeface-roboto';
 import 'muse-ui/dist/muse-ui.css';
 import 'muse-ui-loading/dist/muse-ui-loading.css';
@@ -23,10 +25,13 @@ const errorHandler = (err, vm) => {
   console.error(err);
 }
 
+
 Vue.config.productionTip = false
 Vue.config.errorHandler = errorHandler;
 
 Vue.prototype.$throw = (err) => errorHandler(err, this);
+Vue.prototype.$ws = () => Stompjs.over(new Sockjs('/api/socket'));
+
 
 Vue.use(MuseUI)
   .use(apiRegister)
