@@ -11,9 +11,6 @@ export default {
   name: "transition-fade",
   computed: {
     ...mapState(["direction"])
-  },
-  updated() {
-    console.log(this.direction)
   }
 };
 </script>
