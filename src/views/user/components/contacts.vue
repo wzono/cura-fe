@@ -1,59 +1,60 @@
 <template>
-  <div class="contacts">
+  <div class="contacts" :class="searchPageCls">
     <LayoutBackBar title="Contacts">
       <mu-flex slot="right" class="button-group" align-items="center">
-        <mu-button icon @click="onSearch = !onSearch">
+        <mu-button icon @click="toggleSearch">
           <mu-icon value="search"/>
         </mu-button>
-        <mu-button icon to="/user/add_contact">
+        <mu-button icon to="/user/search_contact">
           <mu-icon value="add"/>
         </mu-button>
       </mu-flex>
       <div :class="searchWrapperCls">
-        <mu-flex direction="column" class="search-contact-wrapper">
+        <mu-flex direction="column" class="search-contact-wrapper" align-items="center">
           <mu-sub-header>Search</mu-sub-header>
           <mu-text-field
             class="search-input"
             placeholder="cura号/备注/昵称"
             full-width
-            :value="searchVal"
+            v-model="searchVal"
             type="search"
             color="secondary"
+            @search="searchSubmit"
+            @blur="focus = false"
+            @focus="focus = true"
+            @input="clearSearchRes"
+            ref="searchInput"
           >
             <mu-icon value="search" slot="prepend" style="margin-right: 5px" color="secondary"></mu-icon>
             <mu-flex slot="append" align-items="center">
-              <mu-button
-                color="secondary"
-                flat
-                v-loading="searching"
-                data-mu-loading-size="24"
-                @click="searchSubmit"
-              >Search</mu-button>
+              <mu-button color="secondary" flat @click="searchSubmit">Search</mu-button>
             </mu-flex>
           </mu-text-field>
-          <mu-list class="search-result-wrapper">
-            <mu-list-item v-for="contact in searchRes" :key="contact.cura_number" avatar button>
+          <mu-list class="search-result-wrapper" v-if="searchRes.length !== 0">
+            <mu-sub-header>Result</mu-sub-header>
+            <mu-list-item v-for="contact in searchRes" :key="contact.curaNumber" avatar button>
               <mu-list-item-action>
                 <mu-avatar>
-                  <img :src="contact.head_url" alt="avatar_url" v-if="contact.head_url">
+                  <img :src="contact.headUrl" alt="avatar_url" v-if="contact.headUrl">
                   <span v-else>{{ contact.nickname.charAt(0) }}</span>
                 </mu-avatar>
               </mu-list-item-action>
               <mu-list-item-content>
-                <mu-list-item-title>{{ contact.nickname }}</mu-list-item-title>
-                <mu-list-item-sub-title>{{ contact.cura_number }}</mu-list-item-sub-title>
+                <mu-list-item-title v-html="formatName(contact)"></mu-list-item-title>
+                <mu-list-item-sub-title v-html="contact.curaNumber"></mu-list-item-sub-title>
               </mu-list-item-content>
             </mu-list-item>
           </mu-list>
+          <div class="empty-text" v-if="isSearchResEmpty">{{ searchResEmptyText }}</div>
         </mu-flex>
         <mu-fade-transition>
           <div class="contacts-list" v-if="!onSearch">
             <mu-list class="add-friends">
-              <mu-list-item button to="/user/add_contact">
+              <mu-list-item button to="/user/search_contact">
                 <mu-list-item-action>
                   <mu-icon value="person_add"></mu-icon>
                 </mu-list-item-action>
-                <mu-list-item-title>Add Friends</mu-list-item-title>
+                <mu-list-item-title>Add Contact</mu-list-item-title>
               </mu-list-item>
             </mu-list>
             <div class="contacts-title">Contacts</div>
@@ -76,26 +77,21 @@
                 </mu-list-item-action>
                 <mu-list-item
                   v-for="contact in contacts"
-                  :key="contact.cura_number"
+                  :key="contact.curaNumber"
                   avatar
                   button
                   slot="nested"
+                  @click="() => handleChatClick(contact.curaNumber)"
                 >
                   <mu-list-item-action>
                     <mu-avatar>
-                      <img :src="contact.head_url" alt="avatar_url" v-if="contact.head_url">
-                      <span v-else>{{ contact.nickname.charAt(0) }}</span>
+                      <img :src="contact.headUrl" alt="avatar_url">
                     </mu-avatar>
                   </mu-list-item-action>
                   <mu-list-item-content>
-                    <mu-list-item-title>{{ contact.nickname }}</mu-list-item-title>
+                    <mu-list-item-title>{{ formatName(contact) }}</mu-list-item-title>
                     <mu-list-item-sub-title>{{ contact.signature }}</mu-list-item-sub-title>
                   </mu-list-item-content>
-                  <mu-list-item-action>
-                    <mu-button icon @click="() => handleChatClick(contact.cura_number)">
-                      <mu-icon value="message"></mu-icon>
-                    </mu-button>
-                  </mu-list-item-action>
                 </mu-list-item>
               </mu-list-item>
             </mu-list>
@@ -107,34 +103,95 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 
+const searchHash = "search";
 export default {
   name: "contacts",
   data() {
     return {
       open: "",
-      searching: false,
       searchVal: "",
       searchRes: [],
-      onSearch: false
+      onSearch: false,
+      searchResEmptyText: "没有符合条件的好友哦~",
+      isSearchResEmpty: false,
+      focus: false
     };
   },
   methods: {
     ...mapActions(["getContacts"]),
-    handleChatClick(cura_number) {
-      this.$router.push("/user/chat?cura=" + cura_number);
+    handleChatClick(curaNumber) {
+      this.$router.push("/user/chat?cura=" + curaNumber);
     },
     searchSubmit() {
-      const value = this.searchVal;
+      const inputEl = this.$refs.searchInput.$el.querySelector(
+        ".mu-text-field-input"
+      );
 
+      inputEl.blur();
+
+      const value = this.searchVal.toLowerCase();
+      if (value === "") {
+        this.$toast.warning('搜索值为空');
+        return;
+      }
+      const searchRes = this.contacts
+        .filter(({ nickname, curaNumber, remark }) => {
+          return (
+            nickname.toLowerCase().includes(value) ||
+            String(curaNumber)
+              .toLowerCase()
+              .includes(value) ||
+            remark.toLowerCase().includes(value)
+          );
+        })
+        .map(user => {
+          user.nickname = user.nickname.replace(
+            new RegExp(value, "i"),
+            v => `<span style="color: #f06292;">${v}</span>`
+          );
+          user.curaNumber = String(user.curaNumber).replace(
+            new RegExp(value, "i"),
+            v => `<span style="color: #f06292;">${v}</span>`
+          );
+          user.remark = user.remark.replace(
+            new RegExp(value, "i"),
+            v => `<span style="color: #f06292;">${v}</span>`
+          );
+          return user;
+        });
+      this.searchRes = searchRes;
+      this.isSearchResEmpty = searchRes.length === 0;
+    },
+    toggleSearch() {
+      !this.onSearch
+        ? (window.location.hash = searchHash)
+        : this.$router.go(-1);
+    },
+    clear() {
+      this.searchVal = "";
+      this.searchRes = [];
+      this.isSearchResEmpty = false;
+    },
+    formatName(contact) {
+      let name = "";
+      if (contact.remark === "") {
+        return contact.nickname;
+      } else {
+        return `${contact.remark}(${contact.nickname})`
+      }
+    },
+    clearSearchRes() {
+      this.searchRes = [];
+      this.isSearchResEmpty = false;
     }
   },
   computed: {
-    ...mapState(["contacts"]),
+    ...mapGetters(["contacts"]),
     formatContacts() {
       return this.contacts.reduce((acc, cur) => {
-        acc[cur.group] ? acc[cur.group].push(cur) : (acc[cur.group] = []);
+        acc[cur.group.name] ? acc[cur.group.name].push(cur) : (acc[cur.group.name] = [cur]);
         return acc;
       }, {});
     },
@@ -143,17 +200,34 @@ export default {
         "search-wrapper": true,
         "mu-move-up": !this.onSearch
       };
+    },
+    searchPageCls() {
+      return {
+        "mu-move-up-focus": this.focus
+      };
+    }
+  },
+  watch: {
+    $route(newVal, oldVal) {
+      const { hash } = newVal;
+      this.onSearch = hash === `#${searchHash}`;
+      this.clear();
     }
   },
   created() {
     this.getContacts();
+    this.onSearch = this.$route.hash === `#${searchHash}`;
+  },
+  beforeRouteLeave(to, from, next) {
+    window.scrollTo(0, 0);
+    next();
   }
 };
 </script>
 
 <style lang="scss" scoped>
 .contacts {
-  font-weight: 300;
+  transition: all 0.3s;
 }
 .contacts-list {
   padding: 10px;
@@ -167,19 +241,31 @@ export default {
 }
 
 .search-contact-wrapper {
+  padding: 0 5vw;
+  .empty-text {
+    font-size: 16px;
+    font-weight: 300;
+    text-align: center;
+    color: $theme-sub-color;
+  }
   .mu-sub-header {
     padding: 0;
   }
-  padding: 0 5vw;
 }
 
+
 .search-wrapper {
-  background: #fafafa;
+  background: $bg-color;
   transition: all 0.3s;
+  position: relative;
 }
 
 .mu-move-up {
   transform: translate3d(0, -116px, 0);
+}
+
+.mu-move-up-focus {
+  transform: translate3d(0, -60px, 0);
 }
 
 .icon {
