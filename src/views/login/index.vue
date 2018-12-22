@@ -59,8 +59,8 @@ export default {
         this.submitLoading = true;
         try {
           const res = await this.login({
-            cura_number: this.cura,
-            password: this.password
+            curaNumber: this.validateForm.cura,
+            password: this.validateForm.password
           });
           this.$toast.success('登陆成功');
           this.loginSuccess = true;
@@ -74,7 +74,6 @@ export default {
       }
     },
     isFormFieldVaild() {
-      console.log(this.validateForm);
       !required(this.validateForm.cura) && this.$toast.info("cura号不能为空");
       !required(this.validateForm.password) && this.$toast.info("密码不能为空");
       return (
@@ -84,11 +83,11 @@ export default {
   },
   computed: {
     loginButtonColor() {
-      return this.loginSuccess ? "success" : "primary";
+      return this.loginSuccess ? "success" : "blueA200";
     }
   },
   created() {
-    this.validateForm.cura = this.$route.query.cura_number || "";
+    this.validateForm.cura = this.$route.query.curaNumber || "";
   }
 };
 </script>

@@ -87,7 +87,7 @@ export default {
         try {
           const {data} = await this.$api.user.register(this.validateForm);
           this.$toast.success("注册成功~");
-          this.$router.push('/register/success', {cura_number: data});
+          this.$router.push('/register/success?cura=' + data.curaNumber);
         } catch(e) {
           this.$throw(e);
         } finally {

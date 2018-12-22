@@ -15,7 +15,7 @@
         direction="column"
       >
         <div class="button">
-          <mu-button color="primary" :to="`/login?cura_number=${curaNumber}`" large>开始Cura~</mu-button>
+          <mu-button color="blueA200" :to="`/login?curaNumber=${curaNumber}`" large>开始Cura~</mu-button>
         </div>
         <div class="logo">
           <img src="@/assets/images/logo.jpg" alt="logo">
@@ -30,8 +30,7 @@ export default {
   name: "register-success",
   computed: {
     curaNumber() {
-      console.log(this.$route);
-      return this.$route.query.cura_number;
+      return this.$route.query.cura;
     }
   }
 };
