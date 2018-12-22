@@ -1,6 +1,6 @@
 <template>
   <div class="back-bar">
-    <mu-appbar style="width: 100%;" color="primary" :z-depth="1">
+    <mu-appbar style="width: 100%;" :color="color" :z-depth="zDepth" ref="appBar">
       <mu-button icon slot="left" @click="goBack()">
         <mu-icon value="arrow_back"></mu-icon>
       </mu-button>
@@ -12,9 +12,12 @@
         <slot name="right"></slot>
       </div>
     </mu-appbar>
-    <div class="content mu-custom-content">
+    <div class="mu-custom-content" ref="content">
+      <div class="content">
       <slot></slot>
     </div>
+    </div>
+
   </div>
 </template>
 
@@ -30,11 +33,9 @@
   .content {
     flex: 1;
     width: 100vw;
-  }
-
-  .mu-custom-content {
-    min-height: calc(100vh - 56px);
-    background: #fafafa;
+    background: $bg-color;
+    overflow: auto;
+    height: 100%;
   }
 </style>
 
@@ -43,11 +44,36 @@ export default {
   name: 'back-bar',
   props: {
     title: String,
+    color: {
+      type: String,
+      default: 'blueA200'
+    },
+    zDepth: {
+      type: Number,
+      default: 1,
+    }
   },
   methods: {
     goBack() {
       this.$router.go(-1);
+    },
+    setContentHeight() {
+      const appBarEl = this.$refs.appBar.$el;
+      const content = this.$refs.content;
+
+      const appBarHeight = parseFloat(getComputedStyle(appBarEl).height, 10);
+      const clientHeight = parseFloat(document.body.clientHeight, 10);
+
+      console.log(clientHeight - appBarHeight)
+      content.style.height = (clientHeight - appBarHeight) + 'px';
     }
+  },
+  mounted() {
+    this.setContentHeight();
+    window.addEventListener('resize', this.setContentHeight);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.setContentHeight);
   }
 }
 </script>
