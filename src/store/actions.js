@@ -9,11 +9,11 @@ const actions = {
       payload: data,
     })
   },
-  async getUser({ commit }) {
-    const res = await $api.user.getUser();
+  async getMe({ commit }) {
+    const res = await $api.user.getMe();
     const { data } = res;
     commit({
-      type: types.LOGIN,
+      type: types.SET_USER,
       payload: data,
     })
   },
@@ -22,6 +22,14 @@ const actions = {
     const { data } = res;
     commit({
       type: types.SET_CONTACTS,
+      payload: data,
+    })
+  },
+  async getGroups({ commit }) {
+    const res = await $api.user.getGroups();
+    const { data } = res;
+    commit({
+      type: types.SET_GROUPS,
       payload: data,
     })
   }

@@ -1,13 +1,12 @@
-import { __values } from "tslib";
 
 export function login({
-  cura_number,
+  curaNumber,
   password,
 }) {
   return $request('/api/user/login', {
     method: 'post',
     data: {
-      cura_number,
+      curaNumber: parseInt(curaNumber, 10),
       password,
     }
   })
@@ -29,20 +28,45 @@ export function register({
 }
 
 
-export function getUser() {
+export function getMe() {
   return $request('/api/user/me');
 }
 
 
 export function getContacts() {
-  return $request('/api/user/contacts');
+  return $request('/api/friend/all');
 }
 
-export function searchOthers(value) {
-  return $request('/api/user/search_contacts', {
+// 搜索其他人来添加好友
+export function searchOthers(information) {
+  return $request('/api/user/get_users_by_info', {
     method: 'get',
     params: {
-      searchValue: value,
+      information,
+    }
+  })
+}
+
+export function getUser(curaNumber) {
+  return $request('/api/user/get_user', {
+    method: 'get',
+    params: {
+      curaNumber,
+    }
+  })
+}
+
+export function getGroups() {
+  return $request('/api/user/groups');
+}
+
+export function submitFriendApply({ curaNumber,  remark, groupId }) {
+  return $request('/api/friend/add', {
+    method: 'post',
+    data: {
+      curaNumber,
+      remark,
+      groupId,
     }
   })
 }
