@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>聊天系统数据统计</title>
+  <script src="echarts.js"></script>
+  <script src="echarts-wordcloud.js"></script>
+  <script src="jquery-3.3.1.js"></script>
+  <!-- <script src="onlinetalk.js"></script> -->
+  <script src="proportion.js"></script>
+  <!-- <script src="onlinepeople.js"></script> -->
+  <style>
+    #div1 {
+      height: 50%;
+      width: 100%;
+    }
+
+    #div2 {
+      height: 50%;
+      width: 100%;
+    }
+
+    #show1 {
+      height: 300px;
+      width: 45%;
+      float: left;
+    }
+
+    #show2 {
+      height: 300px;
+      width: 45%;
+      float: right;
+    }
+
+    #show3 {
+      height: 300px;
+      width: 45%;
+      float: left;
+    }
+
+    #show4 {
+      height: 300px;
+      width: 45%;
+      float: right;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="div1">
+    <div id="show1"></div>
+    <div id="show2"></div>
+  </div>
+  <div id="div2">
+    <div id="show3"></div>
+    <div id="show4"></div>
+  </div>
+  <script>
+    var mychart2 = echarts.init(document.getElementById("show1"));
+    var mychart4 = echarts.init(document.getElementById("show2"));
+
+    //文档就绪后调用getAppInfoAndShow()方法
+    function getAppInfoAndShow() {
+      var content = {};
+      $.ajax({
+        type: "get",
+        url: "http://localhost:8080/api/data/commend",
+        async: false,
+        dataType: "JSON",
+        success: function (data) {
+          content = data.data;
+        }
+      });
+      var echartData = new Array();
+      // for (var i = 0; i < content.length; i++) {
+      //     var obj = new Object();
+      //     obj.name = content[i].labelName;
+      //     obj.value = content[i].appCount;
+      //     obj.itemStyle = wordCloudColor();
+      //     echartData[i] = obj;
+      // }
+      for (i in content) {
+        let item = {};
+        item.name = i;
+        item.value = content[i];
+        echartData.push(item);
+      }
+      console.log(echartData)
+      showWordCloud(echartData);
+    }
+
+    //设置文字样式
+    function wordCloudColor() {
+      return {
+        normal: {
+          color: '#C23531'
+        }
+      };
+    }
+
+    //页面展示
+    function showWordCloud(echartData) {
+      var option4 = {
+        title: {
+          text: "好友印象",
+          x: 'left',
+          z: 1,
+          textStyle: {
+            fontSize: 23,
+            color: '#FFFFFF'
+          }
+        },
+        tooltip: {
+          show: true
+        },
+        series: [{
+          name: '好友印象',
+          type: 'wordCloud',
+          shape: "triangle",
+          sizeRange: [30, 66],
+          rotationRange: [-45, 90],
+          textPadding: 0,
+          autoSize: {
+            enable: true,
+            minSize: 6
+          },
+          textStyle: {
+            normal: {
+              color: function () {
+                return 'rgb(' + [
+                  Math.round(Math.random() * 160),
+                  Math.round(Math.random() * 160),
+                  Math.round(Math.random() * 160)
+                ].join(',') + ')';
+              }
+            },
+            emphasis: {
+              shadowBlur: 10,
+              shadowColor: '#333'
+            }
+          },
+          data: echartData,
+        }]
+      };
+
+      // myChart.on(echarts.config.EVENT.CLICK, getIntoAppPage);
+      mychart4.setOption(option4);
+    }
+
+    function getIntoAppPage(param) {
+      location.href = "/appPage?labelName=" + param.data.name;
+    }
+    $(function () {
+      getAppInfoAndShow();
+
+      setInterval(function () {
+        getAppInfoAndShow();
+      }, 3000);
+
+
+
+
+    });
+
+    //异步获取数据
+  </script>
+</body>
+
+</html>

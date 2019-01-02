@@ -1,6 +1,6 @@
 <template>
   <div class="contacts" :class="searchPageCls">
-    <LayoutBackBar title="Contacts">
+    <LayoutBackBar title="我的好友">
       <mu-flex slot="right" class="button-group" align-items="center">
         <mu-button icon @click="toggleSearch">
           <mu-icon value="search"/>
@@ -20,6 +20,7 @@
             type="search"
             color="secondary"
             @search="searchSubmit"
+            @keyup.enter="searchSubmit"
             @blur="focus = false"
             @focus="focus = true"
             @input="clearSearchRes"
@@ -32,11 +33,10 @@
           </mu-text-field>
           <mu-list class="search-result-wrapper" v-if="searchRes.length !== 0">
             <mu-sub-header>Result</mu-sub-header>
-            <mu-list-item v-for="contact in searchRes" :key="contact.curaNumber" avatar button>
+            <mu-list-item v-for="contact in searchRes" :key="contact.curaNumber" avatar button :to="`/user/chat?cura=${contact.curaNumber}`">
               <mu-list-item-action>
                 <mu-avatar>
-                  <img :src="contact.headUrl" alt="avatar_url" v-if="contact.headUrl">
-                  <span v-else>{{ contact.nickname.charAt(0) }}</span>
+                  <img v-lazy="contact.headUrl">
                 </mu-avatar>
               </mu-list-item-action>
               <mu-list-item-content>
@@ -54,7 +54,7 @@
                 <mu-list-item-action>
                   <mu-icon value="person_add"></mu-icon>
                 </mu-list-item-action>
-                <mu-list-item-title>Add Contact</mu-list-item-title>
+                <mu-list-item-title>添加好友</mu-list-item-title>
               </mu-list-item>
             </mu-list>
             <div class="contacts-title">Contacts</div>
@@ -67,7 +67,7 @@
                 :open="open === key"
                 @toggle-nested="open = arguments[0] ? key : ''"
               >
-                <mu-list-item-title>{{key}} ({{ contacts.length }})</mu-list-item-title>
+                <mu-list-item-title>{{key}} ({{ contacts | online }}/{{ contacts.length }})</mu-list-item-title>
                 <mu-list-item-action>
                   <mu-icon
                     :class="{'toggle-icon': open === key, 'icon': true}"
@@ -85,12 +85,19 @@
                 >
                   <mu-list-item-action>
                     <mu-avatar>
-                      <img :src="contact.headUrl" alt="avatar_url">
+                      <img v-lazy="contact.headUrl" >
                     </mu-avatar>
                   </mu-list-item-action>
                   <mu-list-item-content>
                     <mu-list-item-title>{{ formatName(contact) }}</mu-list-item-title>
-                    <mu-list-item-sub-title>{{ contact.signature }}</mu-list-item-sub-title>
+                    <mu-list-item-sub-title>
+                      <span v-if="contact.isOnline" style="color:#03a9f4">
+                        [在线] <span style="color: #333">{{ contact.signature }}</span>
+                      </span>
+                      <span v-else style="color: #">
+                        [离线] {{ contact.signature }}
+                      </span>
+                    </mu-list-item-sub-title>
                   </mu-list-item-content>
                 </mu-list-item>
               </mu-list-item>
@@ -119,10 +126,19 @@ export default {
       focus: false
     };
   },
+  filters: {
+    online(contacts) {
+      return contacts.filter(contact => contact.isOnline).length;
+    }
+  },
   methods: {
-    ...mapActions(["getContacts"]),
+    // ...mapActions(["getContacts"]),
     handleChatClick(curaNumber) {
-      this.$router.push("/user/chat?cura=" + curaNumber);
+      if (curaNumber == this.user.curaNumber) {
+        this.$router.push("/user/detail?cura=" + curaNumber)
+      } else {
+        this.$router.push("/user/chat?cura=" + curaNumber);
+      }
     },
     searchSubmit() {
       const inputEl = this.$refs.searchInput.$el.querySelector(
@@ -132,6 +148,7 @@ export default {
       inputEl.blur();
 
       const value = this.searchVal.toLowerCase();
+
       if (value === "") {
         this.$toast.warning('搜索值为空');
         return;
@@ -188,12 +205,20 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["contacts"]),
+    ...mapGetters(["contacts", "groups"]),
+    ...mapState(["user"]),
     formatContacts() {
-      return this.contacts.reduce((acc, cur) => {
+      const newContacts = this.contacts.reduce((acc, cur) => {
         acc[cur.group.name] ? acc[cur.group.name].push(cur) : (acc[cur.group.name] = [cur]);
         return acc;
       }, {});
+      const groupMap = this.groups.reduce((acc, cur) => {
+        if (!acc[cur.name]) {
+          acc[cur.name] = [];
+        }
+        return acc;
+      }, newContacts)
+      return groupMap;
     },
     searchWrapperCls() {
       return {
@@ -215,7 +240,6 @@ export default {
     }
   },
   created() {
-    this.getContacts();
     this.onSearch = this.$route.hash === `#${searchHash}`;
   },
   beforeRouteLeave(to, from, next) {

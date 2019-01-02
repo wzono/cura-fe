@@ -27,7 +27,7 @@ const install = (Vue) => {
         dirname === filename ? dirname : dirname + filename
       )
     )
-    console.log(componentName)
+
     // 全局注册组件
     Vue.component(
       componentName,

@@ -53,6 +53,7 @@ router.beforeEach(async (to, from, next) => {
     })
   }
 
+  // 权限路由处理
   if (to.matched.some(r => r.meta.requireAuth)) {
     if (store.state.token) {
       next();
@@ -69,16 +70,13 @@ router.beforeEach(async (to, from, next) => {
         };
       } else {
         next({
-        path: '/login',
-        query: { redirect: to.fullPath }
+          path: '/login',
         })
       }
     }
   } else {
     next();
   }
-
-
 })
 
 

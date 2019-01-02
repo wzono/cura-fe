@@ -5,7 +5,10 @@ module.exports = {
   baseUrl: '/',
   assetsDir: 'static',
   outputDir: 'build',
-
+  transpileDependencies: [
+    /\/node_modules\/vue-echarts\//,
+    /\/node_modules\/resize-detector\//
+  ],
   chainWebpack: (config) => {
     config.resolve.alias
       .set('@', resolve('src'))
@@ -30,6 +33,15 @@ module.exports = {
     }
   },
   devServer: {
-    before: MockServer,
+    // before: MockServer,
+    proxy: {
+      '/api': {
+        pathRewrite: {
+          '^/api': '',
+        },
+        target: ' http://localhost:8080/api',
+        changeOrigin: true
+      },
+    }
   }
 }

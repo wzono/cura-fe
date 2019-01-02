@@ -1,7 +1,7 @@
 <template>
   <div class="register-page">
-    <LayoutBackBar title="REGISTER">
-      <mu-container class="form-wrapper" :fluid="true">
+    <LayoutBackBar title="注册 Cura">
+      <div class="form-wrapper"   >
         <mu-form ref="form" :model="validateForm" class="form-field-wrapper">
           <mu-form-item
             prop="phone"
@@ -11,7 +11,7 @@
             icon="phone"
             help-text="输入11位手机号码~"
           >
-            <mu-text-field v-model="validateForm.phone" type="telephone" max-length="11"/>
+            <mu-text-field v-model="validateForm.phone" type="telephone" max-length="11" @keyup.enter="submit"/>
           </mu-form-item>
           <mu-form-item
             prop="nickname"
@@ -21,7 +21,7 @@
             icon="face"
             help-text="取个好听的昵称吧~"
           >
-            <mu-text-field v-model="validateForm.nickname" type="text" max-length="20"/>
+            <mu-text-field v-model="validateForm.nickname" type="text" max-length="20" @keyup.enter="submit"/>
           </mu-form-item>
           <mu-form-item
             prop="password"
@@ -31,10 +31,10 @@
             icon="locked"
             help-text="6~16位的数字+密码组合哦~"
           >
-            <mu-text-field v-model="validateForm.password" type="password" max-length="16"/>
+            <mu-text-field v-model="validateForm.password" type="password" max-length="16" @keyup.enter="submit"/>
           </mu-form-item>
         </mu-form>
-        <mu-container class="button-wrapper" :fluid="true">
+        <div class="button-wrapper">
           <mu-flex direction="column" align-items="center" justify-content="center">
             <mu-button
               color="secondary"
@@ -44,11 +44,11 @@
               data-mu-loading-size="24"
             >{{ submitText }}</mu-button>
             <mu-paper round :z-depth="0" class="register-image-wrapper">
-              <img src="@/assets/images/register.jpg" alt="register">
+              <img src="@/assets/images/logo.png">
             </mu-paper>
           </mu-flex>
-        </mu-container>
-      </mu-container>
+        </div>
+      </div>
     </LayoutBackBar>
   </div>
 </template>
@@ -110,16 +110,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@keyframes rotate {
-  0% {
-    transform: rotateZ(0);
-  }
-
-  100% {
-    transform: rotateZ(360deg);
-  }
-}
 .form-wrapper {
+  margin-top: 5vh;
   .form-field-wrapper {
     padding-right: 5vw;
   }

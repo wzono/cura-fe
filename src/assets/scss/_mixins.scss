@@ -52,8 +52,13 @@
   text-overflow: ellipsis;
 }
 
-
 @mixin avatar() {
   width: 300px;
   height: 300px;
+}
+
+@mixin default-bg() {
+  background: url("~@/assets/images/default_bg.png") fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
 }

@@ -20,12 +20,12 @@ module.exports = app => {
     res.json(Mock.mock(json));
   })
 
-  app.get('/api/user/contacts', (req, res) => {
+  app.get('/api/friend/all', (req, res) => {
     const json = getJSONData('./templates/contacts.json');
     res.json(Mock.mock(json));
   })
 
-  app.get('/api/user/get_users_by_imformation', (req, res) => {
+  app.get('/api/user/get_users_by_info', (req, res) => {
     console.log(req.query);
     const json = getJSONData('./templates/search_contacts.json');
     res.json(Mock.mock(json));

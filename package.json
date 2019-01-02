@@ -18,13 +18,16 @@
     "muse-ui-toast": "^0.3.0",
     "normalize.css": "^8.0.1",
     "qs": "^6.6.0",
+    "stompjs": "^2.3.3",
     "typeface-roboto": "^0.0.54",
     "validator.tool": "^1.0.10",
     "vant": "^1.5.0-beta2",
     "vue": "^2.5.17",
+    "vue-echarts": "^3.1.3",
     "vue-router": "^3.0.1",
-    "vue-socket.io": "^3.0.4",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "sockjs": "^0.3.19",
+    "xss-filters-es6": "^1.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",

@@ -20,7 +20,8 @@
 
   </div>
 </template>
-
+<script>
+</script>
 <style lang="scss" scoped>
   .back-bar {
     display: flex;
@@ -51,10 +52,15 @@ export default {
     zDepth: {
       type: Number,
       default: 1,
-    }
+    },
+    to: String,
   },
   methods: {
     goBack() {
+      if (this.to) {
+        this.$router.replace(this.to)
+        return;
+      }
       this.$router.go(-1);
     },
     setContentHeight() {
@@ -64,7 +70,6 @@ export default {
       const appBarHeight = parseFloat(getComputedStyle(appBarEl).height, 10);
       const clientHeight = parseFloat(document.body.clientHeight, 10);
 
-      console.log(clientHeight - appBarHeight)
       content.style.height = (clientHeight - appBarHeight) + 'px';
     }
   },

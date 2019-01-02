@@ -18,7 +18,7 @@
           <mu-button color="blueA200" :to="`/login?curaNumber=${curaNumber}`" large>开始Cura~</mu-button>
         </div>
         <div class="logo">
-          <img src="@/assets/images/logo.jpg" alt="logo">
+          <img src="@/assets/images/logo.png">
         </div>
       </mu-flex>
     </mu-flex>

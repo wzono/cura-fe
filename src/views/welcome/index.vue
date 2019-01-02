@@ -4,7 +4,7 @@
       <h1 class="title">CURA</h1>
       <p class="description tb-line">Make Chat Simple</p>
       <div class="logo-wrapper">
-        <img src="@/assets/images/logo.jpg" alt="cura-logo">
+        <img src="@/assets/images/logo.png" >
       </div>
     </div>
 

@@ -1,15 +1,22 @@
 <template>
   <div class="user-detail">
     <div class="header-wrapper">
-      <mu-flex class="navigator">
+      <mu-flex
+        class="navigator"
+        justify-content="between"
+        align-items="center"
+      >
         <mu-button icon class="back-button" @click="goBack()">
           <mu-icon value="arrow_back" color="#fff"></mu-icon>
+        </mu-button>
+        <mu-button icon class="more-button" @click="goMore()" v-if="userInfo.isFriend && !isMyself">
+          <mu-icon value="more_vert" color="#fff"></mu-icon>
         </mu-button>
       </mu-flex>
     </div>
     <mu-flex class="detial-info" direction="column">
       <mu-avatar class="avatar-wrapper" :size="80">
-        <img :src="userInfo.headUrl" alt="avatar">
+        <img v-lazy="userInfo.headUrl">
       </mu-avatar>
       <mu-flex class="actions-wrapper">
         <mu-button
@@ -25,7 +32,7 @@
           fab
           color="#448aff"
           to="/user/settings"
-          v-if="userInfo.curaNumber === user.curaNumber"
+          v-if="isMyself"
         >
           <mu-icon value="edit" color="#fff"></mu-icon>
         </mu-button>
@@ -34,6 +41,7 @@
           color="#448aff"
           :href="`tel:${userInfo.phone}`"
           style="display: inline-block;"
+          v-if="!isMyself"
         >
           <mu-icon value="phone" color="#fff"></mu-icon>
         </mu-button>
@@ -70,21 +78,24 @@
           </mu-list-item>
         </mu-list>
 
-        <mu-container class="commend-wrapper border1px--top-bottom" v-if="showCommend">
+        <mu-sub-header>{{commendText}}</mu-sub-header>
+        <div class="commend-wrapper border1px--top-bottom" v-if="showCommend">
           <mu-chip
             class="chip"
             :color="getRandomColor()"
-            v-for="(commend, index) in userInfo.commend"
-            :key="index"
+            v-for="(commend) in userInfo.commend"
+            :key="commend.commendId"
+            :delete="isMyself"
+            @delete="deleteCommend(commend.commendId)"
           >
             <mu-avatar :size="32">
-              <img :src="commend.headUrl">
+              <img v-lazy="commend.headUrl">
             </mu-avatar>
-            {{ commend.text }}
+            {{ commend.commend }}
           </mu-chip>
-        </mu-container>
-
-        <mu-flex justify-content="center" v-if="userInfo.isFriend">
+        </div>
+        <mu-flex justify-content="center" v-else class="empty-text">{{emptyText}}</mu-flex>
+        <mu-flex justify-content="center" v-if="userInfo.isFriend && !isMyself">
           <mu-button color="primary" round @click="onCommend = true">
             <mu-icon left value="edit"></mu-icon>评价一下~
           </mu-button>
@@ -93,13 +104,13 @@
     </mu-flex>
 
     <mu-dialog width="360" transition="slide-bottom" fullscreen :open.sync="onCommend">
-      <mu-appbar color="primary" title="Add Commend">
+      <mu-appbar color="primary" title="增加评价">
         <mu-button slot="left" icon @click="cancelCommend">
           <mu-icon value="close"></mu-icon>
         </mu-button>
         <mu-button slot="right" flat @click="submitCommend">Done</mu-button>
       </mu-appbar>
-      <mu-container>
+      <div>
         <mu-sub-header>评价</mu-sub-header>
         <mu-flex justify-content="center" style="padding-right: 5vw;">
           <mu-text-field
@@ -111,7 +122,7 @@
             full-width
           ></mu-text-field>
         </mu-flex>
-      </mu-container>
+      </div>
     </mu-dialog>
   </div>
 </template>
@@ -128,7 +139,8 @@ export default {
     return {
       userInfo: {},
       onCommend: false,
-      commend: ""
+      commend: "",
+      isOnline: true,
     };
   },
   methods: {
@@ -142,10 +154,25 @@ export default {
 
       try {
         const { data } = await this.$api.user.getUser(curaNumber);
-        this.userInfo = data;
+        const {user} = data;
+        user.commend = data.commends;
+        this.userInfo = user;
       } catch (e) {
         this.$router.go(-1);
         this.$throw(e);
+      }
+    },
+    async deleteCommend(commendId) {
+      this.loading = this.$loading();
+
+      try {
+        await this.$api.user.deleteCommend(commendId);
+        await this.getUserInfo();
+        this.$toast.success('删除成功');
+      } catch(e) {
+        this.$throw(e);
+      } finally {
+        this.loading.close();
       }
     },
     getRandomColor() {
@@ -154,21 +181,30 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
+    goMore() {
+      this.$router.push(`/user/detial/contact_settings?cura=${this.userInfo.curaNumber}`)
+    },
     cancelCommend() {
       this.onCommend = false;
       this.commend = "";
     },
     async submitCommend() {
-      this.onCommend = false;
-      this.commend = "";
+      this.socket.send("/app/add_commend", {}, JSON.stringify({receiveCuraNumber: this.userInfo.curaNumber, commend: this.commend}));
+      this.loading = this.$loading();
+      setTimeout(async () => {
+        await this.getUserInfo();
+        this.onCommend = false;
+        this.commend = "";
+        this.$toast.success('评价成功!');
+        this.loading.close();
+      }, 500);
     }
   },
   computed: {
-    ...mapState(["user"]),
+    ...mapState(["user", "socket"]),
     userAge() {
-      console.log(parseInt(moment(this.userInfo.birthday, "YYYY-MM-DD").fromNow(), 10))
       return this.userInfo.birthday
-        ? parseInt(moment(this.userInfo.birthday, "YYYY-MM-DD").fromNow(), 10)
+        ? parseInt(moment(this.userInfo.birthday).diff(moment(), 'years'), 10)
         : 0;
     },
     formatBirthday() {
@@ -176,6 +212,18 @@ export default {
     },
     showCommend() {
       return this.userInfo.commend && this.userInfo.commend.length > 0;
+    },
+    isMyself() {
+      return this.userInfo.curaNumber === this.user.curaNumber
+    },
+    person() {
+      return this.isMyself ? '我' : this.userInfo.sex === '男' ? '他' : '她';
+    },
+    commendText() {
+      return `${this.person}的评价`;
+    },
+    emptyText() {
+      return `还没有人给${this.person}评价`
     }
   },
   created() {
@@ -190,7 +238,7 @@ export default {
   min-height: 100vh;
   .header-wrapper {
     height: 20vh;
-    background-image: url("http://cdn.wingsico.org/image/154251694416325900_a640x364.jpg");
+    background-image: url("~@/assets/images/user-detail.jpg");
     background-repeat: no-repeat;
     background-size: 100% auto;
     background-position-y: 75%;
@@ -204,11 +252,20 @@ export default {
         margin: 10px 0 10px 10px;
         background-color: rgba(255, 192, 203, 0.8);
       }
+
+      .more-button {
+        margin: 10px 10px 10px 0;
+        background-color: rgba(255, 192, 203, 0.8);
+      }
     }
   }
 
   .detial-info {
     position: relative;
+    .empty-text {
+      color: $theme-sub-color;
+      margin-bottom: 5vh;
+    }
     .avatar-wrapper {
       position: absolute;
       left: 10vw;

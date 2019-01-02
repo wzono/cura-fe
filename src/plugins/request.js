@@ -23,7 +23,7 @@ const codeMessage = {
 };
 
 const instance = axios.create({
-  timeout: 20000,
+  timeout: 10000,
   responseType: 'json',
   withCredentials: true,
   headers: {
@@ -44,8 +44,7 @@ instance.interceptors.response.use(response => response.data, err => {
     if (status === 401) {
       store.commit(types.LOGOUT);
       router.replace({
-        path: 'login',
-        query: { redirect: router.currentRoute.fullPath },
+        path: '/login',
       })
     }
 
@@ -53,6 +52,9 @@ instance.interceptors.response.use(response => response.data, err => {
     Toast.error(errorMessage);
     return Promise.reject(err);
   }
+
+  Toast.error(codeMessage[504]);
+  throw err;
 })
 
 const request = (url, options) => {

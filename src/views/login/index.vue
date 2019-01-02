@@ -1,11 +1,12 @@
 <template>
   <div class="login-page">
-    <LayoutBackBar title="LOGIN">
-      <mu-container class="form-wrapper" :fluid="true">
+    <LayoutBackBar title="登陆 Cura" to="/">
+      <div class="form-wrapper" >
         <mu-flex justify-content="center">
           <mu-paper circle :z-depth="3" class="user-avatar-wrapper">
             <mu-avatar size="120">
-              <img src="@/assets/images/register.jpg" alt="register">
+              <img src="@/assets/images/logo.png" v-if="!headUrl">
+              <img v-lazy="headUrl" v-else>
             </mu-avatar>
           </mu-paper>
         </mu-flex>
@@ -17,7 +18,7 @@
             <mu-text-field v-model="validateForm.password" type="password" max-length="16"/>
           </mu-form-item>
         </mu-form>
-        <mu-container class="button-wrapper">
+        <div class="button-wrapper" >
           <mu-flex direction="column" align-items="center" justify-content="center">
             <mu-button
               :color="loginButtonColor"
@@ -30,8 +31,8 @@
               <mu-icon value="done" v-else/>
             </mu-button>
           </mu-flex>
-        </mu-container>
-      </mu-container>
+        </div>
+      </div>
     </LayoutBackBar>
   </div>
 </template>
@@ -49,7 +50,8 @@ export default {
         password: ""
       },
       submitLoading: false,
-      loginSuccess: false
+      loginSuccess: false,
+      headUrl: ""
     };
   },
   methods: {
@@ -88,6 +90,7 @@ export default {
   },
   created() {
     this.validateForm.cura = this.$route.query.curaNumber || "";
+    this.headUrl = this.$route.query.headUrl || "";
   }
 };
 </script>

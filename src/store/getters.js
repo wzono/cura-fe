@@ -10,7 +10,8 @@ const getters = {
       remark: contact.remark,
       signature: contact.signature,
       nickname: contact.nickname,
-      headUrl: contact.headUrl
+      headUrl: contact.headUrl,
+      isOnline: contact.isOnline,
     }))
   },
   groups: (state) => {
@@ -19,6 +20,9 @@ const getters = {
       id: group.groupId,
       name: group.groupName,
     }))
+  },
+  getContact: (state, getters) => curaNumber => {
+    return getters.contacts.find(({ curaNumber: c }) => c == curaNumber) || {};
   }
 }
 

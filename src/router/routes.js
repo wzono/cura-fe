@@ -1,10 +1,12 @@
 
-const Login = () => import('@/views/login/Index.vue');
-const Welcome = () => import('@/views/welcome/Index.vue');
-const Register = () => import('@/views/register/Index.vue');
+import Login from '@/views/login/Index.vue';
+import Welcome from '@/views/welcome/Index.vue';
+import Register from '@/views/register/Index.vue';
+import UserLayout from '@/views/user/Layout.vue';
+
+const PageNotFound = () => import('@/views/404/404.vue');
 const RegisterSuccess = () => import('@/views/register/Success.vue');
 
-const UserLayout = () => import('@/views/user/Layout.vue');
 const UserMessageBox = () => import('@/views/user/components/MessageBox.vue');
 const UserContacts = () => import('@/views/user/components/Contacts');
 const UserChat = () => import('@/views/user/components/Chat');
@@ -13,6 +15,15 @@ const UserDetail = () => import('@/views/user/components/UserDetail');
 const UserAddContact = () => import('@/views/user/components/AddContact');
 
 const UserSettings = () => import('@/views/user/components/Settings');
+const UpdateExtraInfo = () => import('@/views/user/components/update/UpdateExtraInfo');
+const UpdatePhone = () => import('@/views/user/components/update/UpdatePhone');
+const UpdateNickname = () => import('@/views/user/components/update/UpdateNickname');
+
+const UserContactSettings = () => import('@/views/user/components/ContactSettings');
+
+const UserNotice = () => import('@/views/user/components/Notice.vue');
+
+const UserGroupSettings = () => import('@/views/user/components/GroupSettings');
 
 
 const routes = [
@@ -78,9 +89,39 @@ const routes = [
         path: 'settings',
         name: 'settings',
         component: UserSettings,
+      },
+      {
+        path: 'settings/extra_info',
+        name: 'update-extra-info',
+        component: UpdateExtraInfo,
+      },
+      {
+        path: 'settings/phone',
+        name: 'update-phone',
+        component: UpdatePhone,
+      },
+      {
+        path: 'settings/nickname',
+        name: 'update-nickname',
+        component: UpdateNickname,
+      },
+      {
+        path: 'detial/contact_settings',
+        name: 'contact-settings',
+        component: UserContactSettings,
+      },
+      {
+        path: 'notice',
+        name: 'notice',
+        component: UserNotice,
+      },
+      {
+        path: 'group_settings',
+        component: UserGroupSettings,
       }
     ]
-  }
+  },
+  { path: '*', component: PageNotFound }
 ];
 
 export default routes;

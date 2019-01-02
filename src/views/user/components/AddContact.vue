@@ -6,7 +6,7 @@
           <mu-list-item avatar button>
             <mu-list-item-action>
               <mu-avatar>
-                <img :src="userInfo.headUrl" alt="avatar_url">
+                <img v-lazy="userInfo.headUrl">
               </mu-avatar>
             </mu-list-item-action>
             <mu-list-item-content>
@@ -18,7 +18,7 @@
           </mu-list-item>
         </mu-list>
       </mu-flex>
-      <mu-container class="form">
+      <div class="form">
         <p class="sub-title">设置备注和分组</p>
         <van-cell-group>
           <van-field v-model="remark" clearable label="备注"/>
@@ -32,7 +32,7 @@
         <mu-flex justify-content="center" style="margin-top: 30px;">
           <mu-button color="primary" large round @click="submitApplication">提交申请</mu-button>
         </mu-flex>
-      </mu-container>
+      </div>
     </LayoutBackBar>
 
     <van-actionsheet v-model="selectorShow" :actions="groups" @select="onSelect"/>
@@ -43,7 +43,7 @@
 import { isUndefined, isEmpty } from "lodash";
 import { CellGroup, Field, Actionsheet, Cell } from "vant";
 import moment from "moment";
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "add-contact",
@@ -72,7 +72,7 @@ export default {
 
       try {
         const { data } = await this.$api.user.getUser(curaNumber);
-        this.userInfo = data;
+        this.userInfo = data.user;
       } catch (e) {
         this.$router.go(-1);
         this.$throw(e);
@@ -90,11 +90,11 @@ export default {
 
       const loading = this.$loading();
       try {
-        await this.$api.user.submitFriendApply({
-          curaNumber: this.userInfo.curaNumber,
+        this.socket.send('/app/apply', {}, JSON.stringify({
+          receiveCuraNumber: this.userInfo.curaNumber,
           remark: this.remark,
           groupId: this.selectedGroup.id
-        });
+        }) )
         this.$toast.success("申请成功！等待对方回复~");
         this.$router.go(-1);
       } catch (e) {
@@ -105,11 +105,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(["user"]),
+    ...mapState(["user", "socket", "socketHeader"]),
     ...mapGetters(["groups"]),
     userAge() {
       return this.userInfo.birthday
-        ? parseInt(moment(this.userInfo.birthday, "YYYY-MM-DD").fromNow(), 10)
+        ? parseInt(moment(this.userInfo.birthday).diff(moment(), 'years'), 10)
         : 0;
     }
   },

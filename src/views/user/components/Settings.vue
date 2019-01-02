@@ -1,15 +1,14 @@
 <template>
   <div class="settings-page">
     <div class="header-wrapper">
-      <mu-flex class="navigator">
+      <mu-flex class="navigator" ref="navigator">
         <mu-button icon class="back-button" @click="goBack()">
           <mu-icon value="arrow_back" color="#fff"></mu-icon>
         </mu-button>
-        <div class="base-container"></div>
       </mu-flex>
-      <mu-flex class="user-base-wrapper" ref="userBase">
+      <mu-flex class="user-base-wrapper">
         <mu-avatar class="avatar-wrapper" :size="60">
-          <img :src="user.headUrl" alt="avatar">
+          <img v-lazy="user.headUrl">
         </mu-avatar>
         <mu-flex direction="column" class="base-info-wrapper">
           <div class="user-nickname">{{ user.nickname }}</div>
@@ -17,7 +16,9 @@
         </mu-flex>
       </mu-flex>
       <mu-button fab color="#fff" class="change-avatar">
-        <mu-icon value="photo" color="#333"></mu-icon>
+        <van-uploader :after-read="onRead">
+          <mu-icon value="photo_camera" color="#333" :size="30"/>
+        </van-uploader>
       </mu-button>
     </div>
 
@@ -26,12 +27,12 @@
         <div class="header">
           <p class="title">Base Info</p>
         </div>
-        <CommonInfoWrapper :content="user.phone" desc="Phone Number"></CommonInfoWrapper>
+        <CommonInfoWrapper :content="user.phone" desc="Phone Number" to="/user/settings/phone"></CommonInfoWrapper>
         <mu-divider></mu-divider>
-        <CommonInfoWrapper :content="user.nickname" desc="Nickname"></CommonInfoWrapper>
+        <CommonInfoWrapper :content="user.nickname" desc="Nickname" to="/user/settings/nickname"></CommonInfoWrapper>
       </div>
       <div class="editable-extra-info-wrapper">
-        <mu-button small fab color="primary" class="edit-extra-button">
+        <mu-button fab color="primary" class="edit-extra-button" to="/user/settings/extra_info">
           <mu-icon value="edit" color="#fff"></mu-icon>
         </mu-button>
         <div class="header">
@@ -52,9 +53,7 @@
         </div>
         <CommonInfoWrapper content="Cura FAQ"></CommonInfoWrapper>
         <mu-divider></mu-divider>
-        <p class="copyright">
-          Cura For Everyone Enjoyed Chatting
-        </p>
+        <p class="copyright">Cura For Everyone Enjoyed Chatting</p>
       </div>
     </div>
   </div>
@@ -62,25 +61,41 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import { Uploader, Icon } from "vant";
+
 export default {
   name: "settings-page",
   data() {
-    return {};
+    return {
+      scroll: 0
+    };
+  },
+  components: {
+    [Uploader.name]: Uploader,
+    [Icon.name]: Icon
   },
   computed: {
     ...mapState(["user"])
   },
   methods: {
+    ...mapActions(["updateAvatar"]),
     goBack() {
-      this.$router.go(-1);
+      this.$router.replace("/user");
     },
-    fixedToHeader(e) {
-      const userBaseEl = this.$refs.userBase;
-      console.log(userBaseEl.scrollTop);
+    async onRead(file) {
+      const formdata = new FormData();
+      formdata.append("headUrl", file.file);
+
+      this.updatingAvatar = this.$loading();
+      try {
+        await this.updateAvatar(formdata);
+        this.$toast.success("更新头像成功");
+      } catch (e) {
+        this.$throw(e);
+      } finally {
+        this.updatingAvatar.close();
+      }
     }
-  },
-  mounted() {
-    window.addEventListener('scroll', this.fixedToHeader);
   }
 };
 </script>
@@ -91,6 +106,7 @@ export default {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  transition: all 0.3s;
   .container-wrapper {
     flex: 1;
     display: flex;
@@ -125,6 +141,7 @@ export default {
         position: absolute;
         right: 12vw;
         top: 1.5vh;
+        z-index: 111;
       }
     }
 
@@ -143,7 +160,6 @@ export default {
     }
   }
   .header-wrapper {
-    height: 21vh;
     background-color: $theme-color;
     position: relative;
 
@@ -159,15 +175,15 @@ export default {
       top: 0;
       left: 0;
       right: 0;
+      z-index: 101;
+      background-color: $theme-color;
       .back-button {
         margin-left: 5px;
         margin-top: 5px;
       }
     }
     .user-base-wrapper {
-      position: relative;
-      top: 9vh;
-      left: 50px;
+      margin: 9vh 0 50px 50px;
       color: #fff;
       .avatar-wrapper {
         margin-right: 5vw;

@@ -112,7 +112,6 @@ textarea {
 .vux-pop-out-leave-active,
 .vux-pop-in-enter-active,
 .vux-pop-in-leave-active {
-  will-change: transform;
   transition: all 300ms;
   height: 100%;
   top: 0;
