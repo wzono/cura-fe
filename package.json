@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "amfe-flexible": "^2.2.1",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "lodash": "^4.17.11",
     "moment": "^2.23.0",
     "muse-ui": "^3.0.1",
