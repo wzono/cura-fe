@@ -10,7 +10,7 @@
     "amfe-flexible": "^2.2.1",
     "axios": "^0.18.0",
     "lodash": "^4.17.11",
-    "moment": "^2.23.0",
+    "moment": "^2.29.2",
     "muse-ui": "^3.0.1",
     "muse-ui-loading": "^0.2.0",
     "muse-ui-message": "^0.2.1",
